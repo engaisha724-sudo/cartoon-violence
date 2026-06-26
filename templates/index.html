@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartoon Violence Detection</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 50px;
+            width: 550px;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+        }
+        .logo { margin-bottom: 15px; }
+        .logo img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 15px;
+        }
+        h1 { color: #ffffff; font-size: 26px; margin-bottom: 8px; }
+        .subtitle { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 40px; }
+        .upload-area {
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 40px 20px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #e94560;
+            background: rgba(233,69,96,0.05);
+        }
+        .upload-area .icon { font-size: 50px; margin-bottom: 15px; }
+        .upload-area p { color: rgba(255,255,255,0.7); font-size: 15px; margin-bottom: 5px; }
+        .upload-area span { color: rgba(255,255,255,0.4); font-size: 12px; }
+        input[type="file"] { display: none; }
+        .file-name { color: #4ecca3; font-size: 13px; margin-bottom: 20px; min-height: 20px; }
+        .btn {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(233,69,96,0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .error {
+            background: rgba(233,69,96,0.2);
+            border: 1px solid rgba(233,69,96,0.5);
+            color: #ff6b8a;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .loading { display: none; color: rgba(255,255,255,0.7); margin-top: 15px; font-size: 14px; }
+        .loading.show { display: block; }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .info { color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 25px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo">
+        </div>
+        <h1>Cartoon Violence Detection</h1>
+        <p class="subtitle">Upload a cartoon video to detect violent content</p>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form action="/predict" method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="upload-area" onclick="document.getElementById('videoInput').click()">
+                <div class="icon"></div>
+                <p>Click to select a video</p>
+                <span>Supported: MP4, AVI, MOV, MKV</span>
+            </div>
+
+            <input type="file" id="videoInput" name="video"
+                   accept=".mp4,.avi,.mov,.mkv"
+                   onchange="showFileName(this)">
+
+            <div class="file-name" id="fileName">No file selected</div>
+
+            <button type="submit" class="btn" id="submitBtn" disabled>
+                 Analyze Video
+            </button>
+
+            <div class="loading" id="loading">
+                <span class="spinner"></span>
+                Analyzing video, please wait...
+            </div>
+        </form>
+
+        <p class="info"> Videos are analyzed locally and not stored permanently</p>
+    </div>
+
+    <script>
+        function showFileName(input) {
+            const fileName = input.files[0] ? input.files[0].name : 'No file selected';
+            document.getElementById('fileName').textContent = '✓ ' + fileName;
+            document.getElementById('submitBtn').disabled = false;
+        }
+        document.getElementById('uploadForm').onsubmit = function() {
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('loading').classList.add('show');
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Result</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 50px;
+            width: 580px;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+        }
+        .logo { margin-bottom: 15px; }
+        .logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+        h1 { color: #ffffff; font-size: 22px; margin-bottom: 30px; }
+
+        .result-box {
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+        .result-violent {
+            background: rgba(233,69,96,0.15);
+            border: 2px solid rgba(233,69,96,0.5);
+        }
+        .result-nonviolent {
+            background: rgba(78,204,163,0.15);
+            border: 2px solid rgba(78,204,163,0.5);
+        }
+        .result-icon { font-size: 60px; margin-bottom: 15px; }
+        .result-label {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .result-violent .result-label { color: #ff6b8a; }
+        .result-nonviolent .result-label { color: #4ecca3; }
+        .confidence {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .breakdown {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .breakdown h3 {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        .bar-item { margin-bottom: 12px; }
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .bar-bg {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        .bar-gun { background: linear-gradient(90deg, #e94560, #c23152); }
+        .bar-knife { background: linear-gradient(90deg, #f39c12, #e67e22); }
+        .bar-nonviolent { background: linear-gradient(90deg, #4ecca3, #2ecc71); }
+
+        .filename {
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(233,69,96,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo">
+        </div>
+        <h1>Detection Result</h1>
+
+        {% if result == "Non-Violent" %}
+        <div class="result-box result-nonviolent">
+            <div class="result-icon"></div>
+            <div class="result-label">{{ result }}</div>
+            <div class="confidence">Confidence: {{ confidence }}%</div>
+        </div>
+        {% else %}
+        <div class="result-box result-violent">
+            <div class="result-icon"></div>
+            <div class="result-label">{{ result }}</div>
+            <div class="confidence">Confidence: {{ confidence }}%</div>
+        </div>
+        {% endif %}
+
+        <div class="breakdown">
+            <h3> Detailed Analysis</h3>
+
+            <div class="bar-item">
+                <div class="bar-label">
+                    <span> Gun Violence</span>
+                    <span>{{ gun_conf }}%</span>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill bar-gun" style="width: {{ gun_conf }}%"></div>
+                </div>
+            </div>
+
+            <div class="bar-item">
+                <div class="bar-label">
+                    <span> Knife Violence</span>
+                    <span>{{ knife_conf }}%</span>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill bar-knife" style="width: {{ knife_conf }}%"></div>
+                </div>
+            </div>
+
+            <div class="bar-item">
+                <div class="bar-label">
+                    <span> Non-Violent</span>
+                    <span>{{ nonviolent_conf }}%</span>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill bar-nonviolent" style="width: {{ nonviolent_conf }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filename"> File: {{ filename }}</div>
+
+        <a href="/" class="btn"> Analyze Another Video</a>
+    </div>
+</body>
+</html>
