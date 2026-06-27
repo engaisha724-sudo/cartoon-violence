@@ -11,7 +11,7 @@ app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB max
 
 # Settings
 IMG_SIZE = 48
-SEQUENCE_LENGTH = 15
+SEQUENCE_LENGTH = 10
 CLASSES = ["Gun Violence", "Knife Violence", "Non-Violent"]
 MODEL_PATH = "D:/cartoon_detection/model/violence_model.h5"
 
@@ -21,7 +21,7 @@ ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv'}
 # Load model
 print("Model loading...")
 model = load_model(MODEL_PATH)
-print("Model loaded! ✓")
+print("Model loaded! ")
 
 def allowed_file(filename):
     return '.' in filename and \
